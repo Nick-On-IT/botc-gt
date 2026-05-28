@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BotC – Trouble Brewing</title>
+  <link rel="icon" type="image/png" href="../../images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      background: #0c0a10;
+      font-family: 'Crimson Pro', Georgia, serif;
+      color: #e8dfc8;
+    }
+    .page {
+      min-height: 100vh; width: 100%;
+      padding: 2rem 1.5rem 4rem;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 0%, #1a1028 0%, transparent 50%), #0c0a10;
+    }
+    .stars {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 8% 12%, rgba(255,240,180,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 38%, rgba(255,240,180,0.25) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 5%, rgba(255,240,180,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 20%, rgba(255,240,180,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 55%, rgba(255,240,180,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 80%, rgba(255,240,180,0.25) 0%, transparent 100%);
+    }
+    header {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 2rem; margin-bottom: 2rem;
+      border-bottom: 0.5px solid rgba(180,140,60,0.15);
+    }
+    .back-btn {
+      align-self: flex-start;
+      font-family: 'IM Fell English', serif; font-size: 13px; font-style: italic;
+      color: rgba(212,168,75,0.45); text-decoration: none; letter-spacing: 0.1em;
+      margin-bottom: 1.5rem; transition: color 0.2s;
+    }
+    .back-btn:hover { color: rgba(212,168,75,0.8); }
+    .header-title {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: clamp(22px, 4vw, 36px);
+      color: #d4a84b; text-align: center; margin-bottom: 0.3rem;
+    }
+    .header-sub {
+      font-family: 'IM Fell English', serif; font-size: 13px; font-style: italic;
+      color: rgba(212,168,75,0.4); letter-spacing: 0.12em; text-align: center;
+    }
+    .filters {
+      position: relative; z-index: 1;
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .filter-btn {
+      font-family: 'IM Fell English', serif; font-size: 12px; font-style: italic;
+      color: rgba(212,168,75,0.5); letter-spacing: 0.1em;
+      background: rgba(255,255,255,0.02);
+      border: 0.5px solid rgba(180,140,60,0.2);
+      border-radius: 2px; padding: 5px 14px; cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: rgba(180,140,60,0.1);
+      color: #d4a84b;
+      border-color: rgba(180,140,60,0.45);
+    }
+    .section-label {
+      position: relative; z-index: 1;
+      font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic;
+      color: rgba(212,168,75,0.3); letter-spacing: 0.2em; text-transform: uppercase;
+      text-align: center; margin-bottom: 1rem; margin-top: 2rem;
+    }
+    .section-label:first-of-type { margin-top: 0; }
+    .grid {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.02);
+      border: 0.5px solid rgba(180,140,60,0.18);
+      border-radius: 2px;
+      padding: 1rem 0.75rem 1.25rem;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      cursor: pointer; position: relative;
+      transition: background 0.2s, border-color 0.2s;
+      text-decoration: none;
+    }
+    .card::before, .card::after {
+      content: ''; position: absolute; width: 7px; height: 7px;
+      border-style: solid;
+    }
+    .card.townsfolk::before, .card.townsfolk::after { border-color: rgba(80,140,200,0.35); }
+    .card.outsider::before,  .card.outsider::after  { border-color: rgba(80,140,200,0.25); }
+    .card.minion::before,    .card.minion::after    { border-color: rgba(200,80,80,0.35); }
+    .card.demon::before,     .card.demon::after     { border-color: rgba(200,80,80,0.5); }
+    .card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+    .card:hover { background: rgba(180,140,60,0.06); border-color: rgba(180,140,60,0.4); }
+    .card.hidden { display: none; }
+    .card-img {
+      width: 64px; height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+    }
+    .card-name {
+      font-family: 'UnifrakturMaguntia', serif; font-size: 14px;
+      color: #d4a84b; text-align: center; line-height: 1.2;
+    }
+    .card-role {
+      font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic;
+      text-align: center; letter-spacing: 0.08em;
+    }
+    .card.townsfolk .card-role { color: rgba(100,160,220,0.6); }
+    .card.outsider  .card-role { color: rgba(100,160,220,0.45); }
+    .card.minion    .card-role { color: rgba(220,100,100,0.6); }
+    .card.demon     .card-role { color: rgba(220,80,80,0.75); }
+    .card-ability {
+      font-family: 'Crimson Pro', serif; font-size: 11px; font-weight: 300;
+      color: rgba(232,223,200,0.45); text-align: center; line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(8,6,14,0.92);
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #120e1e;
+      border: 0.5px solid rgba(180,140,60,0.3);
+      border-radius: 2px;
+      max-width: 480px; width: 100%;
+      padding: 2rem; position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal::before, .modal::after {
+      content: ''; position: absolute; width: 10px; height: 10px;
+      border-color: rgba(180,140,60,0.4); border-style: solid;
+    }
+    .modal::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .modal::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; cursor: pointer;
+      color: rgba(212,168,75,0.4); font-size: 18px;
+      font-family: 'IM Fell English', serif;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: rgba(212,168,75,0.9); }
+    .modal-header {
+      display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;
+    }
+    .modal-img {
+      width: 80px; height: 80px; object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.9));
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-family: 'UnifrakturMaguntia', serif; font-size: 24px; color: #d4a84b;
+    }
+    .modal-type {
+      font-family: 'IM Fell English', serif; font-size: 12px; font-style: italic;
+      letter-spacing: 0.1em; margin-top: 3px;
+    }
+    .modal-type.townsfolk { color: rgba(100,160,220,0.7); }
+    .modal-type.outsider  { color: rgba(100,160,220,0.55); }
+    .modal-type.minion    { color: rgba(220,100,100,0.7); }
+    .modal-type.demon     { color: rgba(220,80,80,0.85); }
+    .modal-divider {
+      height: 0.5px; background: rgba(180,140,60,0.15); margin-bottom: 1.25rem;
+    }
+    .modal-section-title {
+      font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic;
+      color: rgba(212,168,75,0.35); letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .modal-ability {
+      font-family: 'Crimson Pro', serif; font-size: 15px; font-weight: 400;
+      color: rgba(232,223,200,0.75); line-height: 1.7;
+      font-style: italic; margin-bottom: 1.25rem;
+    }
+    .modal-uitleg {
+      font-family: 'Crimson Pro', serif; font-size: 15px; font-weight: 300;
+      color: rgba(232,223,200,0.6); line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="stars"></div>
+
+  <header>
+    <a class="back-btn" href="../index.html">← terug naar scripts</a>
+    <h1 class="header-title">Trouble Brewing</h1>
+    <p class="header-sub">25 personages · beginnersscript</p>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Alle</button>
+    <button class="filter-btn" data-filter="townsfolk">Townsfolk</button>
+    <button class="filter-btn" data-filter="outsider">Outsider</button>
+    <button class="filter-btn" data-filter="minion">Minion</button>
+    <button class="filter-btn" data-filter="demon">Demon</button>
+  </div>
+
+  <p class="section-label" data-section="townsfolk">Townsfolk</p>
+  <div class="grid" id="grid-townsfolk">
+
+    <div class="card townsfolk" data-name="Washerwoman" data-type="townsfolk"
+      data-ability="Je krijgt te weten dat een van twee spelers een bepaalde Townsfolk is."
+      data-uitleg="Als Washerwoman krijg je op de eerste nacht informatie: de Vertelmeester laat je twee spelers zien en vertelt je welk Townsfolk-karakter een van hen is. De andere speler kan om het even wie zijn. Dit helpt je om vroeg in het spel te weten wie welk karakter heeft, maar pas op: als je vergiftigd of dronken bent, kan deze info fout zijn.">
+      <img class="card-img" src="../../images/washerwoman.png" alt="Washerwoman" />
+      <span class="card-name">Washerwoman</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet welke Townsfolk een van twee spelers is.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Librarian" data-type="townsfolk"
+      data-ability="Je krijgt te weten dat een van twee spelers een bepaalde Outsider is."
+      data-uitleg="De Librarian werkt net als de Washerwoman, maar dan voor Outsiders. Je krijgt op de eerste nacht twee spelers te zien, waarvan er een een specifieke Outsider is. Als er geen Outsiders in het spel zijn, krijg je dat ook te weten. Nuttig om snel te weten of er gevaarlijke of onbetrouwbare spelers in je midden zitten.">
+      <img class="card-img" src="../../images/librarian.png" alt="Librarian" />
+      <span class="card-name">Librarian</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet welke Outsider een van twee spelers is.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Investigator" data-type="townsfolk"
+      data-ability="Je krijgt te weten dat een van twee spelers een bepaalde Minion is."
+      data-uitleg="De Investigator krijgt op de eerste nacht informatie over Minions: twee spelers worden getoond, en een van hen is een specifieke Minion. Dit is krachtige informatie, want Minions werken voor de Demon. Gebruik dit om verdachte spelers te identificeren. Maar als je vergiftigd bent, klopt de info niet.">
+      <img class="card-img" src="../../images/investigator.png" alt="Investigator" />
+      <span class="card-name">Investigator</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet welke Minion een van twee spelers is.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Chef" data-type="townsfolk"
+      data-ability="Je krijgt te weten hoeveel kwaadaardige spelers naast elkaar zitten."
+      data-uitleg="De Chef telt op de eerste nacht hoeveel paren van kwaadaardige spelers (Minions en Demon) naast elkaar zitten in de kring. Een getal van 0 betekent dat geen enkel kwaadaardig duo naast elkaar zit. Hoe hoger het getal, hoe meer informatie je hebt over waar het kwaad zich bevindt in de kring.">
+      <img class="card-img" src="../../images/chef.png" alt="Chef" />
+      <span class="card-name">Chef</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet hoeveel kwade spelers naast elkaar zitten.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Empath" data-type="townsfolk"
+      data-ability="Elke nacht weet je hoeveel van je twee buren kwaadaardig zijn (0, 1 of 2)."
+      data-uitleg="De Empath is een van de krachtigste informatiegevers. Elke nacht krijg je te weten hoeveel van je directe buren kwaadaardig zijn: 0, 1 of 2. Naarmate spelers sterven en de kring kleiner wordt, veranderen je buren. Door dit bij te houden kun je steeds nauwkeuriger bepalen wie goed en wie kwaad is.">
+      <img class="card-img" src="../../images/empath.png" alt="Empath" />
+      <span class="card-name">Empath</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet elke nacht hoeveel buren kwaadaardig zijn.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Fortune Teller" data-type="townsfolk"
+      data-ability="Elke nacht kies je twee spelers. Je krijgt te weten of een van hen de Demon is."
+      data-uitleg="De Fortune Teller kiest elke nacht twee spelers en vraagt of een van hen de Demon is. Ze krijgt ja of nee als antwoord. Er is echter een valkuil: er is altijd één goede speler aangewezen als 'valse positieve'. Deze speler registreert altijd als Demon, ook al is hij goed. Dit maakt de Fortune Teller krachtig maar ook tricky.">
+      <img class="card-img" src="../../images/fortuneteller.png" alt="Fortune Teller" />
+      <span class="card-name">Fortune Teller</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Kiest elke nacht twee spelers: is een van hen de Demon?</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Undertaker" data-type="townsfolk"
+      data-ability="Elke nacht (behalve de eerste) weet je welk karakter overdag geëxecuteerd werd."
+      data-uitleg="De Undertaker krijgt elke nacht het karakter te zien van de speler die die dag geëxecuteerd werd. Dit is enorm nuttig: je kunt bevestigen of iemand loog over zijn karakter, of juist ontdekken welke waardevolle Townsfolk het dorp verloren heeft. Op de eerste nacht krijg je geen informatie.">
+      <img class="card-img" src="../../images/undertaker.png" alt="Undertaker" />
+      <span class="card-name">Undertaker</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Weet elke nacht welk karakter geëxecuteerd werd.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Monk" data-type="townsfolk"
+      data-ability="Elke nacht (behalve de eerste) bescherm je een speler tegen de Demon."
+      data-uitleg="De Monk kiest elke nacht een andere speler (niet zichzelf) om te beschermen. Als de Demon die speler die nacht aanvalt, overleeft hij. Dit maakt de Monk bijzonder waardevol om sleutelspelers zoals de Slayer of Fortune Teller in leven te houden. Coördineer discreet wie je beschermt.">
+      <img class="card-img" src="../../images/monk.png" alt="Monk" />
+      <span class="card-name">Monk</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Beschermt elke nacht een speler tegen de Demon.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Ravenkeeper" data-type="townsfolk"
+      data-ability="Als je 's nachts sterft, kies je een speler en weet je diens karakter."
+      data-uitleg="De Ravenkeeper heeft een passieve vaardigheid die alleen activeert wanneer hij 's nachts gedood wordt door de Demon. Op dat moment mag hij een speler kiezen en krijgt hij diens karakter te zien. Dit maakt hem gevaarlijk voor het kwaad: de Demon riskeert waardevolle informatie te onthullen door hem te doden.">
+      <img class="card-img" src="../../images/ravenkeeper.png" alt="Ravenkeeper" />
+      <span class="card-name">Ravenkeeper</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Sterft 's nachts: kies een speler en weet zijn karakter.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Virgin" data-type="townsfolk"
+      data-ability="De eerste keer dat je genomineerd wordt, als de nominator een Townsfolk is, wordt die meteen geëxecuteerd."
+      data-uitleg="De Virgin heeft een eenmalige, krachtige vaardigheid. De allereerste keer dat iemand haar nomineert voor executie, als die nominator een Townsfolk is, wordt die nominator onmiddellijk geëxecuteerd. Dit ontmoedigt goede spelers om de Virgin te nomineren, maar kwaadaardige spelers (Minions, Demon) kunnen haar vrij nomineren zonder risico.">
+      <img class="card-img" src="../../images/virgin.png" alt="Virgin" />
+      <span class="card-name">Virgin</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Eerste nominator die Townsfolk is, wordt geëxecuteerd.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Slayer" data-type="townsfolk"
+      data-ability="Eén keer per spel overdag: kies een speler. Als die de Demon is, sterft hij."
+      data-uitleg="De Slayer heeft één zilveren kogel: hij kan overdag één keer een speler aanwijzen. Als die speler de Demon is, sterft die onmiddellijk en wint het goede team. Als de gekozen speler geen Demon is, gebeurt er niets. Gebruik dit vermogen verstandig en wacht tot je redelijk zeker bent.">
+      <img class="card-img" src="../../images/slayer.png" alt="Slayer" />
+      <span class="card-name">Slayer</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Eén keer: kies een speler. Is die de Demon, sterft hij.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Soldier" data-type="townsfolk"
+      data-ability="Je bent immuun voor de aanval van de Demon."
+      data-uitleg="De Soldier is eenvoudig maar krachtig: de Demon kan hem niet doden. Dit betekent dat de Demon 's nachts zijn aanvallen op anderen moet richten. De Soldier is waardevol om openlijk te claimen, want het dwingt de Demon om tijd te verspillen. Let op: vergiftiging door de Poisoner maakt hem wel kwetsbaar.">
+      <img class="card-img" src="../../images/soldier.png" alt="Soldier" />
+      <span class="card-name">Soldier</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Immuun voor de aanval van de Demon.</span>
+    </div>
+
+    <div class="card townsfolk" data-name="Mayor" data-type="townsfolk"
+      data-ability="Als er 3 spelers over zijn en niemand geëxecuteerd wordt, wint het goede team. Als jij 's nachts sterft, kan een andere speler sterven in jouw plaats."
+      data-uitleg="De Mayor heeft twee vaardigheden. Ten eerste: als er nog 3 spelers leven en het dorp besluit niemand te executeren, wint het goede team meteen. Ten tweede: als de Demon de Mayor aanvalt, kan de aanval doorgestuurd worden naar een willekeurige andere speler. De Mayor is een sterke eindspel-kaart.">
+      <img class="card-img" src="../../images/mayor.png" alt="Mayor" />
+      <span class="card-name">Mayor</span>
+      <span class="card-role">Townsfolk</span>
+      <span class="card-ability">Bij 3 spelers zonder executie wint goed. Aanvallen kunnen doorgaan naar anderen.</span>
+    </div>
+
+  </div>
+
+  <p class="section-label" data-section="outsider">Outsiders</p>
+  <div class="grid" id="grid-outsider">
+
+    <div class="card outsider" data-name="Butler" data-type="outsider"
+      data-ability="Elke nacht kies je een meester. Je mag alleen stemmen als die meester ook stemt."
+      data-uitleg="De Butler is een Outsider die het goede team hindert. Elke nacht kiest hij een meester. De volgende dag mag de Butler alleen zijn hand opsteken om te stemmen als zijn meester dat ook doet. Dit beperkt zijn invloed sterk. Kwaadaardige spelers proberen de Butler als meester te kiezen zodat hij hun stemmen volgt.">
+      <img class="card-img" src="../../images/butler.png" alt="Butler" />
+      <span class="card-name">Butler</span>
+      <span class="card-role">Outsider</span>
+      <span class="card-ability">Mag alleen stemmen als zijn gekozen meester dat doet.</span>
+    </div>
+
+    <div class="card outsider" data-name="Drunk" data-type="outsider"
+      data-ability="Je denkt dat je een Townsfolk bent, maar je vaardigheden werken niet. Je weet niet dat je de Drunk bent."
+      data-uitleg="De Drunk is bijzonder: hij weet zelf niet dat hij de Drunk is. De Vertelmeester geeft hem een Townsfolk-karakter te zien, maar in werkelijkheid zijn al zijn ontvangen informaties onbetrouwbaar of vervalst. Dit maakt de Drunk gevaarlijk voor het goede team, want hij gelooft eerlijk zijn foute informatie en deelt die met anderen.">
+      <img class="card-img" src="../../images/drunk.png" alt="Drunk" />
+      <span class="card-name">Drunk</span>
+      <span class="card-role">Outsider</span>
+      <span class="card-ability">Denkt een Townsfolk te zijn, maar zijn info is onbetrouwbaar.</span>
+    </div>
+
+    <div class="card outsider" data-name="Recluse" data-type="outsider"
+      data-ability="Je kan geregistreerd worden als kwaadaardig of als een Minion of Demon, ook al ben je goed."
+      data-uitleg="De Recluse is een goede speler die er kwaadaardig uitziet. Vaardigheden die hem detecteren, zoals die van de Fortune Teller of Investigator, kunnen hem registreren alsof hij een Minion of zelfs de Demon is. Dit zorgt voor verwarring in het goede team. De Recluse moet zijn onschuld bewijzen terwijl de informatie tegen hem spreekt.">
+      <img class="card-img" src="../../images/recluse.png" alt="Recluse" />
+      <span class="card-name">Recluse</span>
+      <span class="card-role">Outsider</span>
+      <span class="card-ability">Kan vals geregistreerd worden als kwaadaardig of Demon.</span>
+    </div>
+
+    <div class="card outsider" data-name="Saint" data-type="outsider"
+      data-ability="Als jij geëxecuteerd wordt, verliest het goede team."
+      data-uitleg="De Saint is de gevaarlijkste Outsider voor het goede team. Als het dorp hem per ongeluk executeert, verliest het goede team onmiddellijk. Dit maakt hem een krachtig beschermingsmiddel: hij kan zijn karakter claimen om executie te vermijden, maar kwaadaardige spelers kunnen dit weten en hem juist beschuldigen om paniek te zaaien.">
+      <img class="card-img" src="../../images/saint.png" alt="Saint" />
+      <span class="card-name">Saint</span>
+      <span class="card-role">Outsider</span>
+      <span class="card-ability">Als jij geëxecuteerd wordt, verliest het goede team.</span>
+    </div>
+
+  </div>
+
+  <p class="section-label" data-section="minion">Minions</p>
+  <div class="grid" id="grid-minion">
+
+    <div class="card minion" data-name="Poisoner" data-type="minion"
+      data-ability="Elke nacht kies je een speler. Die speler is vergiftigd tot de volgende nacht."
+      data-uitleg="De Poisoner is een van de gevaarlijkste Minions. Elke nacht vergiftigt hij een speler. Vergiftigde spelers denken dat hun vaardigheid normaal werkt, maar de Vertelmeester geeft hen foute of nutteloze informatie. De Poisoner richt zijn pijlen het best op informatiegevers zoals de Empath of Fortune Teller om het goede team te misleiden.">
+      <img class="card-img" src="../../images/poisoner.png" alt="Poisoner" />
+      <span class="card-name">Poisoner</span>
+      <span class="card-role">Minion</span>
+      <span class="card-ability">Vergiftigt elke nacht een speler: diens info is onbetrouwbaar.</span>
+    </div>
+
+    <div class="card minion" data-name="Spy" data-type="minion"
+      data-ability="Elke nacht zie je het Grimoire. Je kan geregistreerd worden als goed en als Townsfolk of Outsider."
+      data-uitleg="De Spy is de meest informatierijke Minion. Hij ziet elke nacht het volledige Grimoire: alle karakters, wie vergiftigd is, wie beschermd wordt. Bovendien kan hij geregistreerd worden als goed, waardoor detectievaardigheden hem als Townsfolk of Outsider tonen. Dit maakt hem extreem moeilijk te ontmaskeren.">
+      <img class="card-img" src="../../images/spy.png" alt="Spy" />
+      <span class="card-name">Spy</span>
+      <span class="card-role">Minion</span>
+      <span class="card-ability">Ziet het Grimoire. Kan vals als goed geregistreerd worden.</span>
+    </div>
+
+    <div class="card minion" data-name="Scarlet Woman" data-type="minion"
+      data-ability="Als de Demon sterft terwijl er 5 of meer spelers leven, word jij de nieuwe Demon."
+      data-uitleg="De Scarlet Woman is een back-up Demon. Als de Imp gedood wordt (door executie of de Slayer) terwijl er nog 5 of meer spelers in leven zijn, neemt de Scarlet Woman onmiddellijk diens rol over en wordt zelf de Demon. Dit maakt het kwaadaardige team bijzonder taai. Het goede team moet haar eerst uitschakelen of wachten tot het spelerveld klein genoeg is.">
+      <img class="card-img" src="../../images/scarletwoman.png" alt="Scarlet Woman" />
+      <span class="card-name">Scarlet Woman</span>
+      <span class="card-role">Minion</span>
+      <span class="card-ability">Als de Demon sterft bij 5+ spelers, word jij de Demon.</span>
+    </div>
+
+    <div class="card minion" data-name="Baron" data-type="minion"
+      data-ability="Er zijn 2 extra Outsiders in het spel."
+      data-uitleg="De Baron verandert de samenstelling van het spel zelf. Wanneer de Baron in het spel zit, zijn er twee extra Outsiders toegevoegd aan de mix. Dit betekent dat er twee Townsfolk vervangen zijn door Outsiders. Het goede team heeft dus minder betrouwbare informatiegevers en meer hinderlijke of gevaarlijke Outsiders om mee om te gaan.">
+      <img class="card-img" src="../../images/baron.png" alt="Baron" />
+      <span class="card-name">Baron</span>
+      <span class="card-role">Minion</span>
+      <span class="card-ability">Voegt 2 extra Outsiders toe aan het spel.</span>
+    </div>
+
+  </div>
+
+  <p class="section-label" data-section="demon">Demon</p>
+  <div class="grid" id="grid-demon">
+
+    <div class="card demon" data-name="Imp" data-type="demon"
+      data-ability="Elke nacht kies je een speler die sterft. Als je jezelf kiest, sterf je en wordt een Minion de nieuwe Imp."
+      data-uitleg="De Imp is de enige Demon in Trouble Brewing en het hart van het kwaadaardige team. Elke nacht kiest hij één speler om te doden. Hij heeft een unieke truc: als hij zichzelf kiest om te sterven, neemt een willekeurige levende Minion zijn rol over en wordt de nieuwe Imp. Dit maakt hem moeilijk te elimineren. De Imp wint als hij de enige speler of het enige duo overhoudt.">
+      <img class="card-img" src="../../images/imp.png" alt="Imp" />
+      <span class="card-name">Imp</span>
+      <span class="card-role">Demon</span>
+      <span class="card-ability">Doodt elke nacht een speler. Kiest hij zichzelf, wordt een Minion de Imp.</span>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Sluiten">✕</button>
+    <div class="modal-header">
+      <img class="modal-img" id="modal-img" src="" alt="" />
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-type" id="modal-type"></div>
+      </div>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-section-title">Vaardigheid</div>
+    <div class="modal-ability" id="modal-ability"></div>
+    <div class="modal-section-title">Uitleg</div>
+    <div class="modal-uitleg" id="modal-uitleg"></div>
+  </div>
+</div>
+
+<script>
+  const cards = document.querySelectorAll('.card');
+  const modal = document.getElementById('modal');
+  const modalClose = document.getElementById('modal-close');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const type = card.dataset.type;
+      document.getElementById('modal-img').src = card.querySelector('.card-img').src;
+      document.getElementById('modal-img').alt = card.dataset.name;
+      document.getElementById('modal-title').textContent = card.dataset.name;
+      const typeEl = document.getElementById('modal-type');
+      typeEl.textContent = card.querySelector('.card-role').textContent;
+      typeEl.className = 'modal-type ' + type;
+      document.getElementById('modal-ability').textContent = card.dataset.ability;
+      document.getElementById('modal-uitleg').textContent = card.dataset.uitleg;
+      modal.classList.add('open');
+    });
+  });
+
+  modalClose.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      const labels = document.querySelectorAll('.section-label');
+      const grids = document.querySelectorAll('.grid');
+      if (filter === 'all') {
+        cards.forEach(c => c.classList.remove('hidden'));
+        labels.forEach(l => l.style.display = '');
+        grids.forEach(g => g.style.display = '');
+      } else {
+        cards.forEach(c => {
+          c.classList.toggle('hidden', c.dataset.type !== filter);
+        });
+        labels.forEach(l => {
+          l.style.display = l.dataset.section === filter ? '' : 'none';
+        });
+        grids.forEach(g => {
+          g.style.display = g.id === 'grid-' + filter ? '' : 'none';
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>
