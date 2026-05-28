@@ -1,104 +1,139 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BotC – Kies een script</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      min-height: 100vh;
+      background: #0c0a10;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Crimson Pro', Georgia, serif;
+    }
+    .page {
+      min-height: 100vh; width: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 3rem 2rem; position: relative; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 0%, #1a1028 0%, transparent 65%), #0c0a10;
+    }
+    .stars {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 8% 12%, rgba(255,240,180,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 38%, rgba(255,240,180,0.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 8%, rgba(255,240,180,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 68% 28%, rgba(255,240,180,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 55%, rgba(255,240,180,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 18%, rgba(255,240,180,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 85%, rgba(255,240,180,0.3) 0%, transparent 100%);
+    }
+    .back-btn {
+      position: absolute; top: 1.5rem; left: 1.5rem;
+      font-family: 'IM Fell English', serif; font-size: 13px; font-style: italic;
+      color: rgba(212,168,75,0.45); text-decoration: none; letter-spacing: 0.1em;
+      display: flex; align-items: center; gap: 6px; z-index: 2;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: rgba(212,168,75,0.8); }
+    .title {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: clamp(20px, 3.5vw, 30px);
+      color: #d4a84b; text-align: center;
+      margin-bottom: 0.4rem; position: relative; z-index: 1;
+    }
+    .subtitle {
+      font-family: 'IM Fell English', serif; font-size: 13px; font-style: italic;
+      color: rgba(212,168,75,0.45); text-align: center; letter-spacing: 0.1em;
+      margin-bottom: 2.5rem; position: relative; z-index: 1;
+    }
+    .ornament {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 2.5rem; position: relative; z-index: 1;
+    }
+    .oline { width: 60px; height: 0.5px; background: rgba(180,140,60,0.3); }
+    .odiamond { width: 6px; height: 6px; background: rgba(180,140,60,0.5); transform: rotate(45deg); }
+    .odot { width: 3px; height: 3px; background: rgba(180,140,60,0.3); border-radius: 50%; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px; width: 100%; max-width: 580px;
+      position: relative; z-index: 1;
+    }
+    .card {
+      background: rgba(255,255,255,0.02);
+      border: 0.5px solid rgba(180,140,60,0.22);
+      border-radius: 2px; padding: 1.5rem 1rem;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      text-decoration: none; position: relative;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .card::before, .card::after {
+      content: ''; position: absolute; width: 8px; height: 8px;
+      border-color: rgba(180,140,60,0.35); border-style: solid;
+    }
+    .card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+    .card:hover { background: rgba(180,140,60,0.07); border-color: rgba(180,140,60,0.5); }
+    .card.coming-soon { opacity: 0.4; pointer-events: none; }
+    .card-icon { font-size: 2.2rem; }
+    .card-title {
+      font-family: 'UnifrakturMaguntia', serif; font-size: 15px;
+      color: #d4a84b; text-align: center; letter-spacing: 0.04em;
+    }
+    .card-desc {
+      font-family: 'IM Fell English', serif; font-size: 12px; font-style: italic;
+      color: rgba(212,168,75,0.4); text-align: center; line-height: 1.5;
+    }
+    .badge {
+      font-family: 'IM Fell English', serif; font-size: 10px; font-style: italic;
+      color: rgba(212,168,75,0.35); letter-spacing: 0.12em;
+      border: 0.5px solid rgba(180,140,60,0.2); border-radius: 2px;
+      padding: 2px 8px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="stars"></div>
+    <a class="back-btn" href="../index.html">← terug</a>
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  .page {
-    min-height: 580px; width: 100%;
-    background: #0c0a10;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 3rem 2rem; position: relative; overflow: hidden;
-  }
-  .bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, #1a1028 0%, transparent 65%); pointer-events: none; }
-  .back-btn {
-    position: absolute; top: 1.5rem; left: 1.5rem;
-    font-family: 'IM Fell English', serif; font-size: 12px; font-style: italic;
-    color: rgba(212,168,75,0.45); text-decoration: none; letter-spacing: 0.1em;
-    display: flex; align-items: center; gap: 6px; z-index: 2;
-  }
-  .back-btn:hover { color: rgba(212,168,75,0.8); }
-  .title {
-    font-family: 'UnifrakturMaguntia', serif; font-size: clamp(20px, 3.5vw, 30px);
-    color: #d4a84b; text-align: center; margin-bottom: 0.4rem; position: relative; z-index: 1;
-  }
-  .subtitle {
-    font-family: 'IM Fell English', serif; font-size: 13px; font-style: italic;
-    color: rgba(212,168,75,0.45); text-align: center; letter-spacing: 0.1em;
-    margin-bottom: 2.5rem; position: relative; z-index: 1;
-  }
-  .ornament {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 2.5rem; position: relative; z-index: 1;
-  }
-  .oline { width: 60px; height: 0.5px; background: rgba(180,140,60,0.3); }
-  .odiamond { width: 6px; height: 6px; background: rgba(180,140,60,0.5); transform: rotate(45deg); }
-  .odot { width: 3px; height: 3px; background: rgba(180,140,60,0.3); border-radius: 50%; }
-  .grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px; width: 100%; max-width: 580px; position: relative; z-index: 1;
-  }
-  .card {
-    background: rgba(255,255,255,0.02);
-    border: 0.5px solid rgba(180,140,60,0.22);
-    border-radius: 2px; padding: 1.5rem 1rem;
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    text-decoration: none; position: relative;
-    transition: background 0.2s, border-color 0.2s; cursor: pointer;
-  }
-  .card::before, .card::after {
-    content: ''; position: absolute; width: 8px; height: 8px;
-    border-color: rgba(180,140,60,0.35); border-style: solid;
-  }
-  .card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
-  .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
-  .card:hover { background: rgba(180,140,60,0.07); border-color: rgba(180,140,60,0.5); }
-  .card.coming-soon { opacity: 0.4; cursor: default; pointer-events: none; }
-  .card-icon { font-size: 2.2rem; }
-  .card-title {
-    font-family: 'UnifrakturMaguntia', serif; font-size: 15px;
-    color: #d4a84b; text-align: center; letter-spacing: 0.04em;
-  }
-  .card-desc {
-    font-family: 'IM Fell English', serif; font-size: 12px; font-style: italic;
-    color: rgba(212,168,75,0.4); text-align: center; line-height: 1.5;
-  }
-  .badge {
-    font-family: 'IM Fell English', serif; font-size: 10px; font-style: italic;
-    color: rgba(212,168,75,0.35); letter-spacing: 0.12em;
-    border: 0.5px solid rgba(180,140,60,0.2); border-radius: 2px;
-    padding: 2px 8px; text-transform: uppercase;
-  }
-</style>
+    <h1 class="title">Kies een script</h1>
+    <p class="subtitle">Nederlandstalige personage uitleg</p>
 
-<div class="page">
-  <div class="bg"></div>
-  <a class="back-btn" href="../index.html">← terug</a>
+    <div class="ornament">
+      <div class="odot"></div>
+      <div class="oline"></div>
+      <div class="odiamond"></div>
+      <div class="oline"></div>
+      <div class="odot"></div>
+    </div>
 
-  <h1 class="title">Kies een script</h1>
-  <p class="subtitle">Nederlandstalige personage uitleg</p>
-
-  <div class="ornament">
-    <div class="odot"></div><div class="oline"></div>
-    <div class="odiamond"></div>
-    <div class="oline"></div><div class="odot"></div>
+    <div class="grid">
+      <a class="card" href="troublebrewing/index.html">
+        <span class="card-icon">🩸</span>
+        <span class="card-title">Trouble Brewing</span>
+        <span class="card-desc">Het beginnersscript. 25 personages.</span>
+      </a>
+      <a class="card coming-soon" href="badmoonrising/index.html">
+        <span class="card-icon">🌕</span>
+        <span class="card-title">Bad Moon Rising</span>
+        <span class="card-desc">Gevorderdenscript.</span>
+        <span class="badge">binnenkort</span>
+      </a>
+      <a class="card coming-soon" href="sectsandviolets/index.html">
+        <span class="card-icon">🌸</span>
+        <span class="card-title">Sects &amp; Violets</span>
+        <span class="card-desc">Gevorderdenscript.</span>
+        <span class="badge">binnenkort</span>
+      </a>
+    </div>
   </div>
-
-  <div class="grid">
-    <a class="card" href="troublebrewing/index.html">
-      <span class="card-icon">🩸</span>
-      <span class="card-title">Trouble Brewing</span>
-      <span class="card-desc">Het beginners­script. 25 personages.</span>
-    </a>
-    <a class="card coming-soon" href="badmoonrising/index.html">
-      <span class="card-icon">🌕</span>
-      <span class="card-title">Bad Moon Rising</span>
-      <span class="card-desc">Gevorderden­script.</span>
-      <span class="badge">binnenkort</span>
-    </a>
-    <a class="card coming-soon" href="sectsandviolets/index.html">
-      <span class="card-icon">🌸</span>
-      <span class="card-title">Sects & Violets</span>
-      <span class="card-desc">Gevorderden­script.</span>
-      <span class="badge">binnenkort</span>
-    </a>
-  </div>
-</div>
+</body>
+</html>
