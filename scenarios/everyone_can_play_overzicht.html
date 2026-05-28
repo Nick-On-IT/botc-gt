@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everyone Can Play – Personages</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d0d0d;
+    color: #e8dfc8;
+    font-family: 'Plus Jakarta Sans', 'Aptos', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 2rem 1.5rem 4rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.1em;
+    color: #e8dfc8;
+    margin-bottom: 0.2rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: #6a6258;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .team-block { margin-bottom: 3rem; }
+
+  .team-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .team-header.good { background: #0e2233; border: 1px solid #1a4a6e; color: #78b4e0; }
+  .team-header.evil { background: #220e0e; border: 1px solid #6e1a1a; color: #d47060; }
+
+  .team-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .good .dot { background: #78b4e0; }
+  .evil .dot { background: #d47060; }
+
+  .category-block { margin-bottom: 1.75rem; }
+
+  .category-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.75rem; }
+
+  .category-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+  }
+
+  .category-pill.townsfolk { background: #0a1e30; color: #5a9fd4; border: 1px solid #1a4060; }
+  .category-pill.outsiders { background: #0d2020; color: #4ab8a0; border: 1px solid #1a5040; }
+  .category-pill.minions   { background: #2a1010; color: #c47060; border: 1px solid #5a2020; }
+  .category-pill.demon     { background: #200808; color: #e05040; border: 1px solid #6e1010; }
+
+  .category-line { flex: 1; height: 1px; opacity: 0.2; }
+  .townsfolk-line, .outsiders-line { background: #5a9fd4; }
+  .minions-line { background: #c47060; }
+  .demon-line   { background: #e05040; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+    gap: 0.55rem;
+  }
+
+  .card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 7px;
+    background: #141414;
+    border: 0.5px solid #242424;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .card:hover { background: #1a1a1a; border-color: #333; }
+
+  .card.townsfolk { border-left: 3px solid #1a4a6e; }
+  .card.outsiders { border-left: 3px solid #1a5040; }
+  .card.minions   { border-left: 3px solid #5a2020; }
+  .card.demon     { border-left: 3px solid #6e1010; }
+
+  .card img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+
+  .card-name { font-size: 0.78rem; font-weight: 700; margin-bottom: 0.12rem; line-height: 1.2; }
+
+  .card-name.townsfolk { color: #78b4e0; }
+  .card-name.outsiders { color: #4ab8a0; }
+  .card-name.minions   { color: #c47060; }
+  .card-name.demon     { color: #e05040; }
+
+  .card-name .nl { display: inline; font-weight: 400; font-size: 0.72rem; color: #6a6258; margin-left: 0.3rem; }
+
+  .card-desc { font-size: 0.82rem; color: #9a9080; line-height: 1.45; }
+  .card-desc strong { color: #c8bfa8; font-weight: 600; }
+
+  .note { text-align: center; font-size: 0.78rem; color: #4a4540; font-style: italic; margin-top: 2rem; }
+</style>
+</head>
+<body>
+
+<h1>Everyone Can Play</h1>
+<p class="subtitle">Personageoverzicht &amp; krachten · v1.0.2</p>
+
+<!-- ═══════════════ GOED ═══════════════ -->
+<div class="team-block">
+  <div class="team-header good"><span class="dot"></span> Goed</div>
+
+  <!-- Townsfolk -->
+  <div class="category-block">
+    <div class="category-header">
+      <span class="category-pill townsfolk">Townsfolk</span>
+      <div class="category-line townsfolk-line"></div>
+    </div>
+    <div class="grid">
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/librarian.png" alt="Librarian">
+        <div>
+          <div class="card-name townsfolk">Librarian <span class="nl">· Bibliothecaris</span></div>
+          <div class="card-desc">Je begint met de kennis dat 1 van 2 spelers een bepaalde <strong>Outsider</strong> is (of dat er 0 zijn).</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/clockmaker.png" alt="Clockmaker">
+        <div>
+          <div class="card-name townsfolk">Clockmaker <span class="nl">· Klokkenmaker</span></div>
+          <div class="card-desc">Je begint met de kennis hoeveel stappen de <strong>Demon</strong> verwijderd is van zijn dichtstbijzijnde <strong>Minion</strong>.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/grandmother.png" alt="Grandmother">
+        <div>
+          <div class="card-name townsfolk">Grandmother <span class="nl">· Grootmoeder</span></div>
+          <div class="card-desc">Je begint met kennis van wie jouw <strong>Kleinkind</strong> is en wat zijn/haar rol is. Als de <strong>Demon</strong> jouw Kleinkind doodt, sterf jij ook.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/fortuneteller.png" alt="Fortune Teller">
+        <div>
+          <div class="card-name townsfolk">Fortune Teller <span class="nl">· Waarzegster</span></div>
+          <div class="card-desc">Elke nacht kies je 2 spelers: je leert of 1 van hen de <strong>Imp</strong> is. Één goede speler kan als Red Herring dienen.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/empath.png" alt="Empath">
+        <div>
+          <div class="card-name townsfolk">Empath <span class="nl">· Empaat</span></div>
+          <div class="card-desc">Elke nacht kom je te weten hoeveel van je 2 levende buren <strong>slecht</strong> zijn.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/monk.png" alt="Monk">
+        <div>
+          <div class="card-name townsfolk">Monk <span class="nl">· Monnik</span></div>
+          <div class="card-desc">Elke nacht* kies je één speler (niet jezelf): die is veilig voor de <strong>Imp</strong> die nacht.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/undertaker.png" alt="Undertaker">
+        <div>
+          <div class="card-name townsfolk">Undertaker <span class="nl">· Lijkgraver</span></div>
+          <div class="card-desc">Elke nacht* kom je te weten welk personage op de dag door executie is gedood.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/gambler.png" alt="Gambler">
+        <div>
+          <div class="card-name townsfolk">Gambler <span class="nl">· Gokker</span></div>
+          <div class="card-desc">Elke nacht* kies je iemand en raad je zijn/haar rol. Fout gegokt? Dan sterf je.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/artist.png" alt="Artist">
+        <div>
+          <div class="card-name townsfolk">Artist <span class="nl">· Kunstenaar</span></div>
+          <div class="card-desc">Eén keer per spel mag je overdag de Storyteller één <strong>ja/nee-vraag</strong> stellen.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/slayer.png" alt="Slayer">
+        <div>
+          <div class="card-name townsfolk">Slayer <span class="nl">· Demonenjager</span></div>
+          <div class="card-desc">Eén keer mag je overdag publiekelijk één speler kiezen: als die de <strong>Imp</strong> is, sterft die onmiddellijk.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/fool.png" alt="Fool">
+        <div>
+          <div class="card-name townsfolk">Fool <span class="nl">· Dwaas</span></div>
+          <div class="card-desc">De eerste keer dat je sterft, sterf je niet.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/ravenkeeper.png" alt="Ravenkeeper">
+        <div>
+          <div class="card-name townsfolk">Ravenkeeper <span class="nl">· Raafwachter</span></div>
+          <div class="card-desc">Als je 's nachts wordt gedood, word je gewekt om één speler te kiezen: je leert welk personage die speler is.</div>
+        </div>
+      </div>
+
+      <div class="card townsfolk">
+        <img src="https://nick-on-it.github.io/botc-gt/images/mayor.png" alt="Mayor">
+        <div>
+          <div class="card-name townsfolk">Mayor <span class="nl">· Burgemeester</span></div>
+          <div class="card-desc">Als er nog 3 spelers leven zonder executie, wint jouw team. Als je 's nachts gedood wordt, sterft een andere speler mogelijk in jouw plaats.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Outsiders -->
+  <div class="category-block">
+    <div class="category-header">
+      <span class="category-pill outsiders">Outsiders</span>
+      <div class="category-line outsiders-line"></div>
+    </div>
+    <div class="grid">
+
+      <div class="card outsiders">
+        <img src="https://nick-on-it.github.io/botc-gt/images/drunk.png" alt="Drunk">
+        <div>
+          <div class="card-name outsiders">Drunk <span class="nl">· Dronkaard</span></div>
+          <div class="card-desc">Je weet niet dat je de <strong>Drunk</strong> bent. Je denkt een <strong>Townsfolk</strong> te zijn, maar dat ben je niet.</div>
+        </div>
+      </div>
+
+      <div class="card outsiders">
+        <img src="https://nick-on-it.github.io/botc-gt/images/recluse.png" alt="Recluse">
+        <div>
+          <div class="card-name outsiders">Recluse <span class="nl">· Kluizenaar</span></div>
+          <div class="card-desc">Je bent <strong>goed</strong>, maar kan je voordoen als <strong>slecht</strong> (Minion/Demon), ook na je dood.</div>
+        </div>
+      </div>
+
+      <div class="card outsiders">
+        <img src="https://nick-on-it.github.io/botc-gt/images/saint.png" alt="Saint">
+        <div>
+          <div class="card-name outsiders">Saint <span class="nl">· Heilige</span></div>
+          <div class="card-desc">Als je door executie gedood wordt, <strong>verliest jouw team</strong>.</div>
+        </div>
+      </div>
+
+      <div class="card outsiders">
+        <img src="https://nick-on-it.github.io/botc-gt/images/moonchild.png" alt="Moonchild">
+        <div>
+          <div class="card-name outsiders">Moonchild <span class="nl">· Maankind</span></div>
+          <div class="card-desc">Wanneer je hoort dat je gestorven bent, kies je publiek één levende speler. Als die speler <strong>goed</strong> is, sterft die vannacht.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SLECHT ═══════════════ -->
+<div class="team-block">
+  <div class="team-header evil"><span class="dot"></span> Slecht</div>
+
+  <!-- Minions -->
+  <div class="category-block">
+    <div class="category-header">
+      <span class="category-pill minions">Minions</span>
+      <div class="category-line minions-line"></div>
+    </div>
+    <div class="grid">
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/baron.png" alt="Baron">
+        <div>
+          <div class="card-name minions">Baron <span class="nl">· Edelman</span></div>
+          <div class="card-desc">Er zijn <strong>2 extra Outsiders</strong> in het spel.</div>
+        </div>
+      </div>
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/poisoner.png" alt="Poisoner">
+        <div>
+          <div class="card-name minions">Poisoner <span class="nl">· Gifmeester</span></div>
+          <div class="card-desc">Elke nacht kies je één speler: gedurende de nacht en volgende dag zijn ze vergiftigd.</div>
+        </div>
+      </div>
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/assassin.png" alt="Assassin">
+        <div>
+          <div class="card-name minions">Assassin <span class="nl">· Moordenaar</span></div>
+          <div class="card-desc">Eén keer per spel kies je 's nachts één speler: die sterft, zelfs als dat normaal niet kan.</div>
+        </div>
+      </div>
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/devilsadvocate.png" alt="Devil's Advocate">
+        <div>
+          <div class="card-name minions">Devil's Advocate <span class="nl">· Duivelsadvocaat</span></div>
+          <div class="card-desc">Elke nacht kies je één levende speler (niet dezelfde als gisteren). Als die speler morgen geëxecuteerd wordt, sterft die niet.</div>
+        </div>
+      </div>
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/spy.png" alt="Spy">
+        <div>
+          <div class="card-name minions">Spy <span class="nl">· Spion</span></div>
+          <div class="card-desc">Elke nacht zie je de Grimoire. Je kan je voordoen als <strong>goed</strong> (Townsfolk/Outsider), ook na je dood.</div>
+        </div>
+      </div>
+
+      <div class="card minions">
+        <img src="https://nick-on-it.github.io/botc-gt/images/scarletwoman.png" alt="Scarlet Woman">
+        <div>
+          <div class="card-name minions">Scarlet Woman <span class="nl">· Bloedrode Vrouw</span></div>
+          <div class="card-desc">Als de <strong>Demon</strong> sterft terwijl er nog 5+ spelers leven, word jij de <strong>Imp</strong>.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Demon -->
+  <div class="category-block">
+    <div class="category-header">
+      <span class="category-pill demon">Demon</span>
+      <div class="category-line demon-line"></div>
+    </div>
+    <div class="grid">
+
+      <div class="card demon">
+        <img src="https://nick-on-it.github.io/botc-gt/images/imp.png" alt="Imp">
+        <div>
+          <div class="card-name demon">Imp <span class="nl">· Duivel</span></div>
+          <div class="card-desc">Elke nacht* kies je één speler die sterft. Vermoord je jezelf, dan wordt één van jouw <strong>Minions</strong> de nieuwe <strong>Imp</strong>.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<p class="note">* Niet in de eerste nacht</p>
+
+</body>
+</html>
